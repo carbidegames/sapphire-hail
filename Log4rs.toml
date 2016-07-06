@@ -1,0 +1,9 @@
+refresh_rate = 30
+
+[appenders.stdout]
+kind = "console"
+encoder = { pattern = "[{h({l})}] {m} [{M}:{L}]\n" }
+
+[root]
+level = "debug"
+appenders = ["stdout"]
