@@ -5,5 +5,5 @@ kind = "console"
 encoder = { pattern = "[{h({l})}] {m} [{M}:{L}]\n" }
 
 [root]
-level = "debug"
+level = "info"
 appenders = ["stdout"]
