@@ -1,58 +1,72 @@
-use std::net::{ToSocketAddrs/*, SocketAddr*/};
+use std::net::SocketAddr;
 use std::time::Duration;
-use hyper::server::{Server, Request, Response, Listening, Handler};
-use hyper::uri::RequestUri;
+use std::io::Write;
+use std::thread::{self, JoinHandle};
+use hyper::{Decoder, Encoder, Next};
+use hyper::net::{HttpStream, HttpListener};
+use hyper::server::{Server, Handler, Request, Response};
+//use hyper::uri::RequestUri;
 use ::Routes;
 
 pub struct Clockwork {
-    routes: Routes
+    _routes: Routes
 }
 
 impl Clockwork {
     pub fn new(routes: Routes) -> Self {
         Clockwork {
-            routes: routes
+            _routes: routes
         }
     }
 
-    pub fn http<A: ToSocketAddrs>(self, addr: A) -> ClockworkHandle {
-        // Set up the handler
-        let handler = ClockworkHandler {
-            routes: self.routes
-        };
+    pub fn http(self, addr: &SocketAddr) -> ClockworkHandle {
+        let listener = HttpListener::bind(addr).unwrap();
 
-        // Start the HTTP server
-        let mut server = Server::http(addr).unwrap();
-        server.keep_alive(Some(Duration::from_secs(5)));
-        server.set_read_timeout(Some(Duration::from_secs(30)));
-        server.set_write_timeout(Some(Duration::from_secs(1)));
-        let listening = server.handle_threads(handler, ::num_cpus::get() * 8).unwrap();
+        // Start the HTTP servers across the cores
+        let cpus = ::num_cpus::get() * 8;
+        let mut handles = Vec::new();
+        for _ in 0..cpus {
+            let listener = listener.try_clone().unwrap();
+            let handle = thread::spawn(move || {
+                let factory = |_| {
+                    ClockworkHandler
+                };
+
+                // Set up the server itself
+                let server = Server::new(listener)
+                    .keep_alive(true)
+                    .idle_timeout(Duration::from_secs(10))
+                    .max_sockets(4096);
+                let (_listening, server_loop) = server.handle(factory).unwrap();
+
+                // Run the HTTP server loop
+                server_loop.run();
+            });
+
+            handles.push(handle);
+        }
 
         // Return a handle for the caller to wait on
         ClockworkHandle {
-            listening: listening
+            handles: handles
         }
     }
 }
 
-/// A handle referring to a Clockwork listening server. Can be used to close the connection and
-/// stop Clockwork from running.
+/// A handle referring to a Clockwork listening server.
 pub struct ClockworkHandle {
-    listening: Listening
+    handles: Vec<JoinHandle<()>>
 }
 
 impl ClockworkHandle {
-    /// Warning: This function doesn't work. The server remains listening after you called it.
-    /// See https://github.com/hyperium/hyper/issues/338 for more details.
-    ///
-    /// Stop the server from listening to its socket address, allowing the guard to be dropped
-    /// without blocking.
-    pub fn close(mut self) {
-        self.listening.close().unwrap();
+    pub fn join(self) {
+        for handle in self.handles {
+            handle.join().unwrap();
+        }
     }
 }
 
-struct ClockworkHandler {
+/*struct ClockworkHandler {
     routes: Routes
 }
 
@@ -63,14 +77,34 @@ impl Handler for ClockworkHandler {
         // Get a route to pass into the router
         let route = match req.uri {
             RequestUri::AbsolutePath(path) => path,
-            other => {
-                error!("Swallowed request uri {:?}, not implemented!", other);
-                String::from("/")
-            }
+            other => panic!("Swallowed request uri {:?}, not implemented!", other)
         };
 
         // Let the router handle the route
         let response = self.routes.handle(&route);
         res.send(response.as_bytes()).unwrap();
+    }
+}*/
+
+struct ClockworkHandler;
+
+impl Handler<HttpStream> for ClockworkHandler {
+    fn on_request(&mut self, _: Request<HttpStream>) -> Next {
+        Next::write()
+    }
+
+    fn on_request_readable(&mut self, _: &mut Decoder<HttpStream>) -> Next {
+        Next::write()
+    }
+
+    fn on_response(&mut self, response: &mut Response) -> Next {
+        use hyper::header::ContentLength;
+        response.headers_mut().set(ContentLength(b"HELLO".len() as u64));
+        Next::write()
+    }
+
+    fn on_response_writable(&mut self, encoder: &mut Encoder<HttpStream>) -> Next {
+        encoder.write(b"HELLO").unwrap();
+        Next::end()
     }
 }

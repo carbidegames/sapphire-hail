@@ -6,9 +6,9 @@ pub fn register(routes: &mut Routes) {
 }
 
 fn home_index() -> String {
-    "Home/Index".into()
+    "<html><body><h1>Index</h1></body></html>".into()
 }
 
 fn home_about() -> String {
-    "Home/About".into()
+    "About".into()
 }

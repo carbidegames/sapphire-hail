@@ -21,8 +21,9 @@ fn main() {
 
     // Start the server
     let addr = get_addr();
-    let _guard = Clockwork::new(routes).http(addr);
+    let guard = Clockwork::new(routes).http(&addr);
     info!("Listening on {}", addr);
+    guard.join();
 }
 
 fn get_addr() -> SocketAddr {
