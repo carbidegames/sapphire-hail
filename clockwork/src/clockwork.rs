@@ -1,6 +1,7 @@
 use std::net::{ToSocketAddrs/*, SocketAddr*/};
 use std::time::Duration;
 use hyper::server::{Server, Request, Response, Listening, Handler};
+use hyper::uri::RequestUri;
 use ::Routes;
 
 pub struct Clockwork {
@@ -56,9 +57,20 @@ struct ClockworkHandler {
 }
 
 impl Handler for ClockworkHandler {
-    fn handle(&self, _req: Request, res: Response) {
-        //let route = req.uri.path.join("/");
-        let response = self.routes.handle("/");
+    fn handle(&self, req: Request, res: Response) {
+        // TODO: Catch panics, responding an internal error
+
+        // Get a route to pass into the router
+        let route = match req.uri {
+            RequestUri::AbsolutePath(path) => path,
+            other => {
+                error!("Swallowed request uri {:?}, not implemented!", other);
+                String::from("/")
+            }
+        };
+
+        // Let the router handle the route
+        let response = self.routes.handle(&route);
         res.send(response.as_bytes()).unwrap();
     }
 }

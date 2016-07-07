@@ -2,8 +2,7 @@ use clockwork::Routes;
 
 pub fn register(routes: &mut Routes) {
     routes.get("/", home_index);
-    routes.get("/home", home_index);
-    routes.get("/home/about", home_about);
+    routes.get("/about", home_about);
 }
 
 fn home_index() -> String {
