@@ -1,4 +1,3 @@
-
 use std::net::{ToSocketAddrs/*, SocketAddr*/};
 use std::time::Duration;
 use hyper::server::{Server, Request, Response, Listening, Handler};
@@ -58,6 +57,8 @@ struct ClockworkHandler {
 
 impl Handler for ClockworkHandler {
     fn handle(&self, _req: Request, res: Response) {
-        res.send(self.routes.handle().as_bytes()).unwrap();
+        //let route = req.uri.path.join("/");
+        let response = self.routes.handle("/");
+        res.send(response.as_bytes()).unwrap();
     }
 }

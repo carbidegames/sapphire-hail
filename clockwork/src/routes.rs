@@ -1,21 +1,34 @@
+use route_recognizer::Router;
+
 pub struct Routes {
-    tmp_handler: Option<Box<RouteHandler>>
+    handlers: Router<HandlerEntry>
+}
+
+struct HandlerEntry {
+    callback: Box<RouteHandler>,
 }
 
 impl Routes {
     pub fn new() -> Self {
         Routes {
-            tmp_handler: None
+            handlers: Router::new()
         }
     }
 
-    pub fn get<S: ToString, H: RouteHandler + 'static>(&mut self, _route: S, handler: H) {
-        // TODO: Actually register instead of just keeping the last one
-        self.tmp_handler = Some(Box::new(handler));
+    pub fn get<H: RouteHandler + 'static>(&mut self, route: &str, handler: H) {
+        self.handlers.add(route, HandlerEntry {
+            callback: Box::new(handler),
+        });
     }
 
-    pub fn handle(&self) -> String {
-        self.tmp_handler.as_ref().unwrap().handle()
+    pub fn handle(&self, route: &str) -> String {
+        let response = if let Ok(matc) = self.handlers.recognize(route) {
+            matc.handler.callback.handle()
+        } else {
+            "404".into()
+        };
+        
+        response
     }
 }
 
