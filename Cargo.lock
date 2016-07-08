@@ -54,6 +54,7 @@ dependencies = [
 name = "clockwork"
 version = "0.1.0"
 dependencies = [
+ "crossbeam 0.2.9 (registry+https://github.com/rust-lang/crates.io-index)",
  "hyper 0.9.4 (git+https://github.com/hyperium/hyper.git)",
  "log 0.3.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "num_cpus 0.2.13 (registry+https://github.com/rust-lang/crates.io-index)",

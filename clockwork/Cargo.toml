@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["Layl <LaylConway@users.noreply.github.com>"]
 
 [dependencies]
+crossbeam = "0.2.9"
 hyper = {git = "https://github.com/hyperium/hyper.git"}
 log = "0.3.6"
 num_cpus = "0.2.13"
