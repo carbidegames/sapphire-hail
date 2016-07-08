@@ -3,10 +3,12 @@ use std::time::Duration;
 use std::thread::{self, JoinHandle};
 use std::sync::Arc;
 use crossbeam::sync::MsQueue;
+use hyper::Next;
 use hyper::net::HttpListener;
 use hyper::server::Server;
-use Routes;
+use routes::Routes;
 use hyper_handler::HyperHandler;
+use worker::WorkerCommand;
 
 pub struct Clockwork {
     _routes: Routes,
@@ -52,8 +54,9 @@ impl Clockwork {
         let listener = HttpListener::bind(addr).unwrap();
         for _ in 0..self.server_threads {
             let listener = listener.try_clone().unwrap();
+            let queue = queue.clone();
             let handle = thread::spawn(move || {
-                Self::server_thread(listener);
+                Self::server_thread(listener, queue);
             });
 
             handles.push(handle);
@@ -66,14 +69,24 @@ impl Clockwork {
     }
 
     fn worker_thread(queue: Arc<MsQueue<WorkerCommand>>) {
+        // TODO: Move to worker module
         loop {
-            let _work = queue.pop();
+            match queue.pop() {
+                WorkerCommand::HandleRequest{ctrl, response} => {
+                    // Write a response back to the hyper handler
+                    // TODO: Refactor this into a nice wrapper
+                    ctrl.ready(Next::write()).unwrap();
+                    response.send("HELLO!".into()).unwrap();
+                }
+            }
         }
     }
 
-    fn server_thread(listener: HttpListener) {
-        let factory = |ctrl| {
-            HyperHandler::new(ctrl)
+    fn server_thread(listener: HttpListener, queue: Arc<MsQueue<WorkerCommand>>) {
+        //TODO: Move to hyper_server module along with HyperHandler
+        let factory = move |ctrl| {
+            let queue = queue.clone();
+            HyperHandler::new(ctrl, queue)
         };
 
         // Set up the server itself
@@ -99,8 +112,4 @@ impl ClockworkJoinHandle {
             handle.join().unwrap();
         }
     }
-}
-
-enum WorkerCommand {
-    Request
 }
