@@ -98,13 +98,14 @@ impl Handler<HttpStream> for HyperHandler {
         // Use in case of worker thread queue full:
         response.set_status(StatusCode::Ok);
         let headers = response.headers_mut();
-        headers.set(ContentLength(self.data.as_ref().unwrap().len() as u64));
+        headers.set(ContentLength(self.data.as_ref().unwrap().as_bytes().len() as u64));
 
         Next::write()
     }
 
     fn on_response_writable(&mut self, response: &mut Encoder<HttpStream>) -> Next {
-        response.write(self.data.as_ref().unwrap().as_bytes()).unwrap();
+        let bytes = self.data.as_ref().unwrap().as_bytes();
+        response.write(bytes).unwrap();
 
         Next::end()
     }
