@@ -115,7 +115,7 @@ dependencies = [
 [[package]]
 name = "hyper"
 version = "0.9.4"
-source = "git+https://github.com/hyperium/hyper.git#5f273ef646a9e7b7154ecd52b1f65388b77ea422"
+source = "git+https://github.com/hyperium/hyper.git#220d09fc3a68cdd9a10589b2b454b54312518bb3"
 dependencies = [
  "cookie 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "httparse 1.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -194,7 +194,7 @@ dependencies = [
  "kernel32-sys 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.13 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.3.6 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde 0.7.12 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde 0.7.13 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde-value 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "toml 0.1.30 (registry+https://github.com/rust-lang/crates.io-index)",
  "typemap 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -231,7 +231,7 @@ dependencies = [
  "libc 0.2.13 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.3.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "miow 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "net2 0.2.24 (registry+https://github.com/rust-lang/crates.io-index)",
+ "net2 0.2.25 (registry+https://github.com/rust-lang/crates.io-index)",
  "nix 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "slab 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "time 0.1.35 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -244,14 +244,14 @@ version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "kernel32-sys 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "net2 0.2.24 (registry+https://github.com/rust-lang/crates.io-index)",
+ "net2 0.2.25 (registry+https://github.com/rust-lang/crates.io-index)",
  "winapi 0.2.7 (registry+https://github.com/rust-lang/crates.io-index)",
  "ws2_32-sys 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "net2"
-version = "0.2.24"
+version = "0.2.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "cfg-if 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -446,7 +446,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "serde"
-version = "0.7.12"
+version = "0.7.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
@@ -455,7 +455,7 @@ version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "ordered-float 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde 0.7.12 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde 0.7.13 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -508,7 +508,7 @@ name = "toml"
 version = "0.1.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "serde 0.7.12 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde 0.7.13 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]

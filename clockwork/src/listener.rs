@@ -1,12 +1,32 @@
 use std::io::Write;
 use std::sync::Arc;
 use std::sync::mpsc::{self, Receiver};
+use std::time::Duration;
 use crossbeam::sync::MsQueue;
 use hyper::{Control, Decoder, Encoder, Next};
-use hyper::net::HttpStream;
-use hyper::server::{Handler, Request, Response};
+use hyper::net::{HttpStream, HttpListener};
+use hyper::server::{Server, Handler, Request, Response};
+use hyper::status::StatusCode;
 use hyper::header::ContentLength;
 use worker::WorkerCommand;
+
+pub fn run_listener(listener: HttpListener, queue: Arc<MsQueue<WorkerCommand>>) {
+    //TODO: Move to hyper_server module along with HyperHandler
+    let factory = move |ctrl| {
+        let queue = queue.clone();
+        HyperHandler::new(ctrl, queue)
+    };
+
+    // Set up the server itself
+    let server = Server::new(listener)
+        .keep_alive(true)
+        .idle_timeout(Duration::from_secs(10))
+        .max_sockets(4096);
+    let (_listening, server_loop) = server.handle(factory).unwrap();
+
+    // Run the HTTP server loop
+    server_loop.run();
+}
 
 /*struct ClockworkHandler {
     routes: Routes
@@ -29,6 +49,7 @@ impl Handler for ClockworkHandler {
 }*/
 
 pub struct HyperHandler {
+    // TODO: Consider replacing these Options with a state instead
     ctrl: Option<Control>,
     queue: Arc<MsQueue<WorkerCommand>>,
     receiver: Option<Receiver<String>>,
@@ -74,6 +95,8 @@ impl Handler<HttpStream> for HyperHandler {
         // We arrived here after being notified, so there should be data in the receiver
         self.data = Some(self.receiver.as_ref().unwrap().recv().unwrap());
 
+        // Use in case of worker thread queue full:
+        response.set_status(StatusCode::Ok);
         let headers = response.headers_mut();
         headers.set(ContentLength(self.data.as_ref().unwrap().len() as u64));
 

@@ -5,7 +5,7 @@ extern crate num_cpus;
 extern crate route_recognizer;
 
 mod clockwork;
-mod hyper_handler;
+mod listener;
 mod routes;
 mod worker;
 
