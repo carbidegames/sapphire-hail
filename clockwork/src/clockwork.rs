@@ -8,7 +8,7 @@ use listener;
 use worker;
 
 pub struct Clockwork {
-    _routes: Routes,
+    routes: Routes,
     worker_threads: usize,
     listener_threads: usize,
 }
@@ -17,7 +17,7 @@ impl Clockwork {
     pub fn new(routes: Routes) -> Self {
         let cpus = ::num_cpus::get();
         Clockwork {
-            _routes: routes,
+            routes: routes,
             worker_threads: cpus,
             listener_threads: cpus,
         }
@@ -35,13 +35,15 @@ impl Clockwork {
 
     pub fn http(self, addr: &SocketAddr) -> ClockworkJoinHandle {
         let mut handles = Vec::new();
+        let routes = Arc::new(self.routes);
 
         // Create the worker threads
         let queue = Arc::new(MsQueue::new());
         for _ in 0..self.worker_threads {
             let queue = queue.clone();
+            let routes = routes.clone();
             let handle = thread::spawn(move || {
-                worker::run_worker(queue);
+                worker::run_worker(queue, routes);
             });
 
             handles.push(handle);

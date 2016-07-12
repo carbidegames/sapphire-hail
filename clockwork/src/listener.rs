@@ -3,7 +3,7 @@ use std::sync::Arc;
 use std::sync::mpsc::{self, Receiver};
 use std::time::Duration;
 use crossbeam::sync::MsQueue;
-use hyper::{Control, Decoder, Encoder, Next};
+use hyper::{Control, Decoder, Encoder, Next, RequestUri};
 use hyper::net::{HttpStream, HttpListener};
 use hyper::server::{Server, Handler, Request, Response};
 use hyper::status::StatusCode;
@@ -11,7 +11,6 @@ use hyper::header::ContentLength;
 use worker::WorkerCommand;
 
 pub fn run_listener(listener: HttpListener, queue: Arc<MsQueue<WorkerCommand>>) {
-    //TODO: Move to hyper_server module along with HyperHandler
     let factory = move |ctrl| {
         let queue = queue.clone();
         HyperHandler::new(ctrl, queue)
@@ -28,28 +27,9 @@ pub fn run_listener(listener: HttpListener, queue: Arc<MsQueue<WorkerCommand>>) 
     server_loop.run();
 }
 
-/*struct ClockworkHandler {
-    routes: Routes
-}
-
-impl Handler for ClockworkHandler {
-    fn handle(&self, req: Request, res: Response) {
-        // TODO: Catch panics, responding an internal error
-
-        // Get a route to pass into the router
-        let route = match req.uri {
-            RequestUri::AbsolutePath(path) => path,
-            other => panic!("Swallowed request uri {:?}, not implemented!", other)
-        };
-
-        // Let the router handle the route
-        let response = self.routes.handle(&route);
-        res.send(response.as_bytes()).unwrap();
-    }
-}*/
-
 pub struct HyperHandler {
     // TODO: Consider replacing these Options with a state instead
+    uri: Option<RequestUri>,
     ctrl: Option<Control>,
     queue: Arc<MsQueue<WorkerCommand>>,
     receiver: Option<Receiver<String>>,
@@ -59,6 +39,7 @@ pub struct HyperHandler {
 impl HyperHandler {
     pub fn new(ctrl: Control, queue: Arc<MsQueue<WorkerCommand>>) -> Self {
         HyperHandler {
+            uri: None,
             ctrl: Some(ctrl),
             queue: queue,
             receiver: None,
@@ -68,8 +49,8 @@ impl HyperHandler {
 }
 
 impl Handler<HttpStream> for HyperHandler {
-    fn on_request(&mut self, _: Request<HttpStream>) -> Next {
-        // TODO: Actually read the header
+    fn on_request(&mut self, req: Request<HttpStream>) -> Next {
+        self.uri = Some(req.uri().clone());
         Next::read()
     }
 
@@ -83,6 +64,7 @@ impl Handler<HttpStream> for HyperHandler {
         let (sender, receiver) = mpsc::channel();
         self.receiver = Some(receiver);
         self.queue.push(WorkerCommand::HandleRequest{
+            uri: self.uri.take().unwrap(),
             ctrl: self.ctrl.take().unwrap(),
             response: sender,
         });
