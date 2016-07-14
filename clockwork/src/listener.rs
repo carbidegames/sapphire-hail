@@ -8,7 +8,7 @@ use hyper::net::{HttpStream, HttpListener};
 use hyper::server::{Server, Handler, Request, Response};
 use hyper::status::StatusCode;
 use hyper::header::ContentLength;
-use worker::WorkerCommand;
+use worker::{WorkerCommand, RequestToken};
 
 pub fn run_listener(listener: HttpListener, queue: Arc<MsQueue<WorkerCommand>>) {
     let factory = move |ctrl| {
@@ -60,14 +60,15 @@ impl Handler<HttpStream> for HyperHandler {
         //  can return Next::read() and you'll be notified when it's ready again
 
         // Queue up a worker task
-        // TODO: Refactor this into a nice wrapper
+        // TODO: Refactor task queueing into a nice wrapper
         let (sender, receiver) = mpsc::channel();
         self.receiver = Some(receiver);
-        self.queue.push(WorkerCommand::HandleRequest{
-            uri: self.uri.take().unwrap(),
-            ctrl: self.ctrl.take().unwrap(),
-            response: sender,
-        });
+        let token = RequestToken::new(
+            self.uri.take().unwrap(),
+            self.ctrl.take().unwrap(),
+            sender
+        );
+        self.queue.push(WorkerCommand::HandleRequest(token));
 
         // We need to wait till we get notified by the worker that we're done
         Next::wait()
@@ -77,7 +78,7 @@ impl Handler<HttpStream> for HyperHandler {
         // We arrived here after being notified, so there should be data in the receiver
         self.data = Some(self.receiver.as_ref().unwrap().recv().unwrap());
 
-        // Use in case of worker thread queue full:
+        // Build up the response header
         response.set_status(StatusCode::Ok);
         let headers = response.headers_mut();
         headers.set(ContentLength(self.data.as_ref().unwrap().as_bytes().len() as u64));
