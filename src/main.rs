@@ -2,6 +2,9 @@ extern crate clockwork;
 extern crate dotenv;
 #[macro_use] extern crate log;
 extern crate log4rs;
+extern crate webutil;
+extern crate handlebars;
+extern crate rustc_serialize;
 
 mod controllers;
 

@@ -1,0 +1,8 @@
+[package]
+name = "webutil"
+version = "0.1.0"
+description = "General purpose HTML utilities."
+authors = ["Layl <LaylConway@users.noreply.github.com>"]
+license = "MIT/Apache-2.0"
+
+[dependencies]

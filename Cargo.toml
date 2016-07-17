@@ -2,9 +2,13 @@
 name = "sapphire-hail"
 version = "0.1.0"
 authors = ["Layl <LaylConway@users.noreply.github.com>"]
+license = "MIT/Apache-2.0"
 
 [dependencies]
 clockwork = {path = "./clockwork"}
 dotenv = "0.8.0"
 log = "0.3.6"
 log4rs = {version = "0.4.8", features = ["toml"]}
+webutil = {path = "./webutil"}
+handlebars = "0.18.2"
+rustc-serialize = "0.3.19"

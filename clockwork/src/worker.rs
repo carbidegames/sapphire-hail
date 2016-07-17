@@ -28,7 +28,7 @@ fn handle_request(request: RequestToken, routes: &Routes) {
     };
 
     // Write a response back to the hyper handler
-    request.complete(response_data);
+    request.complete(response_data.raw);
 }
 
 pub enum WorkerCommand {
