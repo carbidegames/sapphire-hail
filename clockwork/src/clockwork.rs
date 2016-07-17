@@ -68,7 +68,7 @@ impl Clockwork {
     }
 }
 
-/// A handle referring to a Clockwork listening server.
+/// A handle referring to a Clockwork server.
 pub struct ClockworkJoinHandle {
     handles: Vec<JoinHandle<()>>
 }

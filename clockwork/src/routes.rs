@@ -1,11 +1,7 @@
-use route_recognizer::Router;
+use route_recognizer::{Router, Params};
 
 pub struct Routes {
     handlers: Router<HandlerEntry>
-}
-
-struct HandlerEntry {
-    callback: Box<RouteHandler>,
 }
 
 impl Routes {
@@ -15,7 +11,7 @@ impl Routes {
         }
     }
 
-    pub fn get<H: RouteHandler + 'static>(&mut self, route: &str, handler: H) {
+    pub fn register<H: RouteHandler + 'static>(&mut self, route: &str, handler: H) {
         self.handlers.add(route, HandlerEntry {
             callback: Box::new(handler),
         });
@@ -23,21 +19,42 @@ impl Routes {
 
     pub fn handle(&self, route: &str) -> String {
         let response = if let Ok(matc) = self.handlers.recognize(route) {
-            matc.handler.callback.handle()
+            let params = matc.params;
+            let entry = matc.handler;
+
+            let url = UrlParams {
+                internal: params
+            };
+
+            entry.callback.handle(url)
         } else {
             "404".into()
         };
-        
+
         response
     }
 }
 
-pub trait RouteHandler: Send + Sync {
-    fn handle(&self) -> String;
+struct HandlerEntry {
+    callback: Box<RouteHandler>,
 }
 
-impl<F: Fn() -> String + Send + Sync> RouteHandler for F {
-    fn handle(&self) -> String {
-        self()
+pub struct UrlParams {
+    internal: Params
+}
+
+impl UrlParams {
+    pub fn get(&self, key: &str) -> Option<&str> {
+        self.internal.find(key)
+    }
+}
+
+pub trait RouteHandler: Send + Sync {
+    fn handle(&self, url: UrlParams) -> String;
+}
+
+impl<F: Fn(UrlParams) -> String + Send + Sync> RouteHandler for F {
+    fn handle(&self, url: UrlParams) -> String {
+        self(url)
     }
 }

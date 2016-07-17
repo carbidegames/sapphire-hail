@@ -9,5 +9,7 @@ mod listener;
 mod routes;
 mod worker;
 
+pub mod route_model;
+
 pub use clockwork::{Clockwork, ClockworkJoinHandle};
-pub use routes::{Routes, RouteHandler};
+pub use routes::{Routes, RouteHandler, UrlParams};
