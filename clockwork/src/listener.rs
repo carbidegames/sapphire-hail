@@ -1,4 +1,3 @@
-use std::io::Write;
 use std::sync::Arc;
 use std::sync::mpsc::{self, Receiver};
 use std::time::Duration;
@@ -19,7 +18,7 @@ pub fn run_listener(listener: HttpListener, queue: Arc<MsQueue<WorkerCommand>>) 
     // Set up the server itself
     let server = Server::new(listener)
         .keep_alive(true)
-        .idle_timeout(Duration::from_secs(10))
+        .idle_timeout(Some(Duration::from_secs(10)))
         .max_sockets(4096);
     let (_listening, server_loop) = server.handle(factory).unwrap();
 
