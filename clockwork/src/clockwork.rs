@@ -6,17 +6,20 @@ use hyper::net::HttpListener;
 use routes::Routes;
 use listener;
 use worker;
+use modules::Modules;
 
 pub struct Clockwork {
+    modules: Modules,
     routes: Routes,
     worker_threads: usize,
     listener_threads: usize,
 }
 
 impl Clockwork {
-    pub fn new(routes: Routes) -> Self {
+    pub fn new(modules: Modules, routes: Routes) -> Self {
         let cpus = ::num_cpus::get();
         Clockwork {
+            modules: modules,
             routes: routes,
             worker_threads: cpus,
             listener_threads: cpus,
@@ -35,15 +38,17 @@ impl Clockwork {
 
     pub fn http(self, addr: &SocketAddr) -> ClockworkJoinHandle {
         let mut handles = Vec::new();
+        let modules = Arc::new(self.modules);
         let routes = Arc::new(self.routes);
 
         // Create the worker threads
         let queue = Arc::new(MsQueue::new());
         for _ in 0..self.worker_threads {
             let queue = queue.clone();
+            let modules = modules.clone();
             let routes = routes.clone();
             let handle = thread::spawn(move || {
-                worker::run_worker(queue, routes);
+                worker::run_worker(queue, modules, routes);
             });
 
             handles.push(handle);

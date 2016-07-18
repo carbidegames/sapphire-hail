@@ -1,47 +1,27 @@
 use std::collections::BTreeMap;
-use clockwork::{Routes, UrlParams};
+use clockwork::{Routes, UrlParams, Modules};
 use clockwork::route_model::{self, RouteModel};
+use clockwork_handlebars::ViewRenderer;
 use webutil::HtmlString;
-use handlebars::Handlebars;
 use rustc_serialize::json::{Json, ToJson};
 
 pub fn register(routes: &mut Routes) {
     routes.register("/", index);
     routes.register("/about", about);
     routes.register("/number/:num", route_model::wrap(number));
-    routes.register("/number_new/:num", route_model::wrap(number_new));
 }
 
-fn index(_: UrlParams) -> HtmlString {
+fn index(_: &Modules, _: UrlParams) -> HtmlString {
     HtmlString::bless("<html><body><h1>Index</h1></body></html>")
 }
 
-fn about(_: UrlParams) -> HtmlString {
+fn about(_: &Modules, _: UrlParams) -> HtmlString {
     HtmlString::bless("<html><body><h1>About</h1></body></html>")
 }
 
-fn number(model: NumberModel) -> HtmlString {
-    // Set up the template
-    let source = "<html><body><h1>Number #{{num}}</h1></body></html>";
-    let mut handlebars = Handlebars::new();
-    handlebars.register_template_string("number", source.to_string())
-        .ok().unwrap();
-
-    // Render the template with the model's data
-    let html = handlebars.render("number", &model).unwrap();
-    HtmlString::bless(html)
-}
-
-fn number_new(model: NumberModel) -> HtmlString {
-    // Set up the template
-    let source = "<html><body><h1>Number #{{num}}</h1></body></html>";
-    let mut handlebars = Handlebars::new();
-    handlebars.register_template_string("number", source.to_string())
-        .ok().unwrap();
-
-    // Render the template with the model's data
-    let html = handlebars.render("number", &model).unwrap();
-    HtmlString::bless(html)
+fn number(modules: &Modules, model: NumberModel) -> HtmlString {
+    let views: &ViewRenderer = modules.get().unwrap();
+    views.render("number", &model)
 }
 
 struct NumberModel {
@@ -59,7 +39,7 @@ impl RouteModel for NumberModel {
 impl ToJson for NumberModel {
     fn to_json(&self) -> Json {
         let mut m: BTreeMap<String, Json> = BTreeMap::new();
-        m.insert("num".to_string(), self.num.to_json());
+        m.insert("num".into(), self.num.to_json());
         m.to_json()
     }
 }

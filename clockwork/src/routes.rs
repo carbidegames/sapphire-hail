@@ -1,5 +1,6 @@
-use route_recognizer::{Router, Params};
 use webutil::{HtmlString, UriValue};
+use route_recognizer::{Router, Params};
+use modules::Modules;
 
 pub struct Routes {
     handlers: Router<HandlerEntry>
@@ -18,7 +19,7 @@ impl Routes {
         });
     }
 
-    pub fn handle(&self, route: &str) -> HtmlString {
+    pub fn handle(&self, modules: &Modules, route: &str) -> HtmlString {
         let response = if let Ok(matc) = self.handlers.recognize(route) {
             let params = matc.params;
             let entry = matc.handler;
@@ -27,7 +28,7 @@ impl Routes {
                 internal: params
             };
 
-            entry.callback.handle(url)
+            entry.callback.handle(modules, url)
         } else {
             HtmlString::bless("<html><body><h1>404</h1></body></html>")
         };
@@ -53,11 +54,11 @@ impl UrlParams {
 }
 
 pub trait RouteHandler: Send + Sync {
-    fn handle(&self, url: UrlParams) -> HtmlString;
+    fn handle(&self, modules: &Modules, url: UrlParams) -> HtmlString;
 }
 
-impl<F: Fn(UrlParams) -> HtmlString + Send + Sync> RouteHandler for F {
-    fn handle(&self, url: UrlParams) -> HtmlString {
-        self(url)
+impl<F: Fn(&Modules, UrlParams) -> HtmlString + Send + Sync> RouteHandler for F {
+    fn handle(&self, modules: &Modules, url: UrlParams) -> HtmlString {
+        self(modules, url)
     }
 }

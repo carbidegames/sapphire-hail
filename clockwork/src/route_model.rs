@@ -1,5 +1,6 @@
-use routes::{RouteHandler, UrlParams};
 use webutil::HtmlString;
+use routes::{RouteHandler, UrlParams};
+use modules::Modules;
 
 pub fn wrap<M: RouteModel, H: ModelRouteHandler<M>>(handler: H) -> ModelHandlerWrapper<M, H> {
     ModelHandlerWrapper {
@@ -8,7 +9,7 @@ pub fn wrap<M: RouteModel, H: ModelRouteHandler<M>>(handler: H) -> ModelHandlerW
     }
 }
 
-pub trait RouteModel: Send + Sync /* TODO: Find a way to eliminate Send and Sync */ {
+pub trait RouteModel: Send + Sync {
     fn from(url: UrlParams) -> Self;
 }
 
@@ -18,18 +19,18 @@ pub struct ModelHandlerWrapper<M: RouteModel, H: ModelRouteHandler<M>> {
 }
 
 impl<M: RouteModel, H: ModelRouteHandler<M>> RouteHandler for ModelHandlerWrapper<M, H> {
-    fn handle(&self, url: UrlParams) -> HtmlString {
+    fn handle(&self, modules: &Modules, url: UrlParams) -> HtmlString {
         let model = M::from(url);
-        self.handler.handle(model)
+        self.handler.handle(modules, model)
     }
 }
 
 pub trait ModelRouteHandler<M: RouteModel>: Send + Sync {
-    fn handle(&self, model: M) -> HtmlString;
+    fn handle(&self, modules: &Modules, model: M) -> HtmlString;
 }
 
-impl<M: RouteModel, F: Fn(M) -> HtmlString + Send + Sync> ModelRouteHandler<M> for F {
-    fn handle(&self, model: M) -> HtmlString {
-        self(model)
+impl<M: RouteModel, F: Fn(&Modules, M) -> HtmlString + Send + Sync> ModelRouteHandler<M> for F {
+    fn handle(&self, modules: &Modules, model: M) -> HtmlString {
+        self(modules, model)
     }
 }

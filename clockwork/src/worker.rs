@@ -3,17 +3,18 @@ use std::sync::Arc;
 use crossbeam::sync::MsQueue;
 use hyper::{Control, Next, RequestUri};
 use routes::Routes;
+use modules::Modules;
 
-pub fn run_worker(queue: Arc<MsQueue<WorkerCommand>>, routes: Arc<Routes>) {
+pub fn run_worker(queue: Arc<MsQueue<WorkerCommand>>, modules: Arc<Modules>, routes: Arc<Routes>) {
     // TODO: Catch panics gracefully
     loop {
         match queue.pop() {
-            WorkerCommand::HandleRequest(request) => handle_request(request, &routes)
+            WorkerCommand::HandleRequest(request) => handle_request(request, &modules, &routes)
         }
     }
 }
 
-fn handle_request(request: RequestToken, routes: &Routes) {
+fn handle_request(request: RequestToken, modules: &Modules, routes: &Routes) {
     // TODO: Timeout connections if we receive them X amount of time after they're queued
 
     let response_data = {
@@ -24,7 +25,7 @@ fn handle_request(request: RequestToken, routes: &Routes) {
         };
 
         // Let the appropriate handler handle it
-        routes.handle(&route)
+        routes.handle(modules, &route)
     };
 
     // Write a response back to the hyper handler
