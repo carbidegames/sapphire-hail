@@ -1,5 +1,5 @@
 use route_recognizer::{Router, Params};
-use webutil::HtmlString;
+use webutil::{HtmlString, UriValue};
 
 pub struct Routes {
     handlers: Router<HandlerEntry>
@@ -45,8 +45,10 @@ pub struct UrlParams {
 }
 
 impl UrlParams {
-    pub fn get(&self, key: &str) -> Option<&str> {
-        self.internal.find(key)
+    pub fn get(&self, key: &str) -> Option<String> {
+        let raw = try_opt!(self.internal.find(key));
+        let val = UriValue::bless(raw);
+        Some(val.unescape())
     }
 }
 

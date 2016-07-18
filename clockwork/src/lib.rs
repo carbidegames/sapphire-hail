@@ -4,6 +4,7 @@ extern crate hyper;
 extern crate num_cpus;
 extern crate route_recognizer;
 extern crate webutil;
+#[macro_use] extern crate try_opt;
 
 mod clockwork;
 mod listener;

@@ -9,6 +9,7 @@ pub fn register(routes: &mut Routes) {
     routes.register("/", index);
     routes.register("/about", about);
     routes.register("/number/:num", route_model::wrap(number));
+    routes.register("/number_new/:num", route_model::wrap(number_new));
 }
 
 fn index(_: UrlParams) -> HtmlString {
@@ -31,6 +32,18 @@ fn number(model: NumberModel) -> HtmlString {
     HtmlString::bless(html)
 }
 
+fn number_new(model: NumberModel) -> HtmlString {
+    // Set up the template
+    let source = "<html><body><h1>Number #{{num}}</h1></body></html>";
+    let mut handlebars = Handlebars::new();
+    handlebars.register_template_string("number", source.to_string())
+        .ok().unwrap();
+
+    // Render the template with the model's data
+    let html = handlebars.render("number", &model).unwrap();
+    HtmlString::bless(html)
+}
+
 struct NumberModel {
     num: String,
 }
@@ -38,7 +51,7 @@ struct NumberModel {
 impl RouteModel for NumberModel {
     fn from(url: UrlParams) -> Self {
         NumberModel {
-            num: url.get("num").unwrap().into()
+            num: url.get("num").unwrap()
         }
     }
 }
