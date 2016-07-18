@@ -21,7 +21,13 @@ fn about(_: &Modules, _: UrlParams) -> HtmlString {
 
 fn number(modules: &Modules, model: NumberModel) -> HtmlString {
     let views: &ViewRenderer = modules.get().unwrap();
-    views.render("number", &model)
+
+    let view_model = NumberViewModel {
+        num: model.num.clone(),
+        loneliest: if model.num == "1" {true} else {false}
+    };
+
+    views.render("number", &view_model)
 }
 
 struct NumberModel {
@@ -36,10 +42,16 @@ impl RouteModel for NumberModel {
     }
 }
 
-impl ToJson for NumberModel {
+struct NumberViewModel {
+    num: String,
+    loneliest: bool,
+}
+
+impl ToJson for NumberViewModel {
     fn to_json(&self) -> Json {
         let mut m: BTreeMap<String, Json> = BTreeMap::new();
         m.insert("num".into(), self.num.to_json());
+        m.insert("loneliest".into(), self.loneliest.to_json());
         m.to_json()
     }
 }
