@@ -26,7 +26,7 @@ fn number(modules: &Modules, model: NumberModel) -> HtmlString {
 
     let view_model = NumberViewModel {
         num: model.num.clone(),
-        loneliest: if model.num == "1" {true} else {false}
+        loneliest: model.num == "1"
     };
 
     views.render("number", &view_model)

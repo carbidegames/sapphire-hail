@@ -5,7 +5,6 @@ dependencies = [
  "clockwork 0.1.0",
  "clockwork-handlebars 0.1.0",
  "dotenv 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "handlebars 0.18.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.3.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "log4rs 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "rustc-serialize 0.3.19 (registry+https://github.com/rust-lang/crates.io-index)",
