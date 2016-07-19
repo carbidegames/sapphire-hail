@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
-use clockwork::{Routes, UrlParams, Modules};
-use clockwork::route_model::{self, RouteModel};
+use clockwork::Modules;
+use clockwork::routes::{self, RouteModel, Routes, UrlParams};
 use clockwork_handlebars::ViewRenderer;
 use webutil::HtmlString;
 use rustc_serialize::json::{Json, ToJson};
@@ -8,7 +8,7 @@ use rustc_serialize::json::{Json, ToJson};
 pub fn register(routes: &mut Routes) {
     routes.register("/", index);
     routes.register("/about", about);
-    routes.register("/number/:num", route_model::wrap(number));
+    routes.register("/number/:num", routes::wrap_model(number));
 }
 
 fn index(modules: &Modules, _: UrlParams) -> HtmlString {

@@ -11,7 +11,8 @@ mod controllers;
 use std::env;
 use std::net::{SocketAddr, IpAddr};
 use std::str::FromStr;
-use clockwork::{Clockwork, Routes, Modules};
+use clockwork::{Clockwork, Modules};
+use clockwork::routes::Routes;
 use clockwork_handlebars::ViewRenderer;
 
 fn main() {
