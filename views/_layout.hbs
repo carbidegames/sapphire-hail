@@ -1,8 +1,55 @@
 <html>
     <head>
         <title>Sapphire Hail</title>
+        <style>
+            @import url(https://fonts.googleapis.com/css?family=Raleway:200|Open+Sans);
+            body {
+                font-family: 'Open Sans', sans-serif;
+
+                display: flex;
+                justify-content: center;
+            }
+
+            .content {
+                width: 600px;
+            }
+
+            h1 {
+                font-family: 'Raleway';
+            }
+
+            ul {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+            }
+
+            li {
+                display: inline;
+                padding: 6px;
+                color: #444;
+            }
+
+            li:hover {
+                background-color: #EEE;
+                color: #222;
+            }
+
+            li a {
+                text-decoration: none;
+                color: inherit;
+            }
+        </style>
     </head>
     <body>
-        {{{content}}}
+        <div class="content">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/number/1">Number #1</a></li>
+                <li><a href="/number/2">Number #2</a></li>
+            </ul>
+            {{{content}}}
+        </div>
     </body>
 </html>
