@@ -11,12 +11,14 @@ pub fn register(routes: &mut Routes) {
     routes.register("/number/:num", route_model::wrap(number));
 }
 
-fn index(_: &Modules, _: UrlParams) -> HtmlString {
-    HtmlString::bless("<html><body><h1>Index</h1></body></html>")
+fn index(modules: &Modules, _: UrlParams) -> HtmlString {
+    let views: &ViewRenderer = modules.get().unwrap();
+    views.render("hello", &HelloViewModel {text: "Index".into()})
 }
 
-fn about(_: &Modules, _: UrlParams) -> HtmlString {
-    HtmlString::bless("<html><body><h1>About</h1></body></html>")
+fn about(modules: &Modules, _: UrlParams) -> HtmlString {
+    let views: &ViewRenderer = modules.get().unwrap();
+    views.render("hello", &HelloViewModel {text: "About".into()})
 }
 
 fn number(modules: &Modules, model: NumberModel) -> HtmlString {
@@ -52,6 +54,18 @@ impl ToJson for NumberViewModel {
         let mut m: BTreeMap<String, Json> = BTreeMap::new();
         m.insert("num".into(), self.num.to_json());
         m.insert("loneliest".into(), self.loneliest.to_json());
+        m.to_json()
+    }
+}
+
+struct HelloViewModel {
+    text: String,
+}
+
+impl ToJson for HelloViewModel {
+    fn to_json(&self) -> Json {
+        let mut m: BTreeMap<String, Json> = BTreeMap::new();
+        m.insert("text".into(), self.text.to_json());
         m.to_json()
     }
 }

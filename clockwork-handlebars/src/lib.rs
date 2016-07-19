@@ -40,10 +40,10 @@ impl ViewRenderer {
         }
     }
 
-    pub fn render<S: ToString, M: ToJson>(&self, _view: S, model: &M) -> HtmlString {
+    pub fn render<M: ToJson>(&self, view: &str, model: &M) -> HtmlString {
         // TODO: Register views on new
 
-        let html = self.registry.render("number", model).unwrap();
+        let html = self.registry.render(view, model).unwrap();
         HtmlString::bless(html)
     }
 }
