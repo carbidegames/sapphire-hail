@@ -21,7 +21,7 @@ fn main() {
 
     // Load in the modules
     let mut modules = Modules::new();
-    modules.register(ViewRenderer::new());
+    modules.register(ViewRenderer::new("views", "_layout"));
 
     // Load in the controllers
     let mut routes = Routes::new();

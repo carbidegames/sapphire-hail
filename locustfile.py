@@ -1,9 +1,14 @@
+from random import randint
 from locust import HttpLocust, TaskSet, task
 
 class WebsiteTasks(TaskSet):
     @task
     def index(self):
         self.client.get("/")
+
+    @task
+    def number(self):
+        self.client.get("/number/" + str(randint(0,9)))
 
 class WebsiteUser(HttpLocust):
     task_set = WebsiteTasks
