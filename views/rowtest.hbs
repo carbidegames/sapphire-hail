@@ -1,0 +1,15 @@
+<h1>Row Test</h1>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Coolness</th>
+        <th>Dopeness</th>
+    </tr>
+    {{#each rows}}
+        <tr>
+            <td>{{this.name}}</td>
+            <td>{{this.coolness}}</td>
+            <td>{{this.dopeness}}</td>
+        </tr>
+    {{/each}}
+</table>

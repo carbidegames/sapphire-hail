@@ -9,16 +9,31 @@ pub fn register(routes: &mut Routes) {
     routes.register("/", index);
     routes.register("/about", about);
     routes.register("/number/:num", routes::wrap_model(number));
+    routes.register("/rowtest", rowtest);
 }
 
 fn index(modules: &Modules, _: UrlParams) -> HtmlString {
     let views: &ViewRenderer = modules.get().unwrap();
+
     views.render("hello", &HelloViewModel {text: "Index".into()})
 }
 
 fn about(modules: &Modules, _: UrlParams) -> HtmlString {
     let views: &ViewRenderer = modules.get().unwrap();
+
     views.render("hello", &HelloViewModel {text: "About".into()})
+}
+
+struct HelloViewModel {
+    text: String,
+}
+
+impl ToJson for HelloViewModel {
+    fn to_json(&self) -> Json {
+        let mut m: BTreeMap<String, Json> = BTreeMap::new();
+        m.insert("text".into(), self.text.to_json());
+        m.to_json()
+    }
 }
 
 fn number(modules: &Modules, model: NumberModel) -> HtmlString {
@@ -58,14 +73,45 @@ impl ToJson for NumberViewModel {
     }
 }
 
-struct HelloViewModel {
-    text: String,
+fn rowtest(modules: &Modules, _: UrlParams) -> HtmlString {
+    let views: &ViewRenderer = modules.get().unwrap();
+
+    let mut rows = Vec::new();
+    for i in 0..1000 {
+        rows.push(RowTestEntry {
+            name: format!("User #{}", i),
+            coolness: (i + 20) * 59 % 100,
+            dopeness: (i + 20) * 43 % 100,
+        });
+    }
+
+    views.render("rowtest", &RowTestModel {rows: rows})
 }
 
-impl ToJson for HelloViewModel {
+struct RowTestModel {
+    rows: Vec<RowTestEntry>
+}
+
+impl ToJson for RowTestModel {
     fn to_json(&self) -> Json {
         let mut m: BTreeMap<String, Json> = BTreeMap::new();
-        m.insert("text".into(), self.text.to_json());
+        m.insert("rows".into(), self.rows.to_json());
+        m.to_json()
+    }
+}
+
+struct RowTestEntry {
+    name: String,
+    coolness: i32,
+    dopeness: i32,
+}
+
+impl ToJson for RowTestEntry {
+    fn to_json(&self) -> Json {
+        let mut m: BTreeMap<String, Json> = BTreeMap::new();
+        m.insert("name".into(), self.name.to_json());
+        m.insert("coolness".into(), self.coolness.to_json());
+        m.insert("dopeness".into(), self.dopeness.to_json());
         m.to_json()
     }
 }
