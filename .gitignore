@@ -1,2 +1,8 @@
-target
 locustfile.pyc
+node_modules
+
+# Rust build artifacts
+target
+
+# Gulp output
+public/style
