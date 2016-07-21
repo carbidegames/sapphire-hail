@@ -7,6 +7,7 @@ extern crate clockwork;
 extern crate clockwork_handlebars;
 
 mod controllers;
+mod models;
 
 use std::env;
 use std::net::{SocketAddr, IpAddr};

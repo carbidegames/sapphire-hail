@@ -1,0 +1,69 @@
+use std::collections::BTreeMap;
+use clockwork::routes::{RouteModel, UrlParams};
+use rustc_serialize::json::{Json, ToJson};
+
+pub struct HelloViewModel {
+    pub text: String,
+}
+
+impl ToJson for HelloViewModel {
+    fn to_json(&self) -> Json {
+        let mut m: BTreeMap<String, Json> = BTreeMap::new();
+        m.insert("text".into(), self.text.to_json());
+        m.to_json()
+    }
+}
+
+pub struct NumberModel {
+    pub num: String,
+}
+
+impl RouteModel for NumberModel {
+    fn from(url: UrlParams) -> Self {
+        NumberModel {
+            num: url.get("num").unwrap()
+        }
+    }
+}
+
+pub struct NumberViewModel {
+    pub num: String,
+    pub loneliest: bool,
+}
+
+impl ToJson for NumberViewModel {
+    fn to_json(&self) -> Json {
+        let mut m: BTreeMap<String, Json> = BTreeMap::new();
+        m.insert("num".into(), self.num.to_json());
+        m.insert("loneliest".into(), self.loneliest.to_json());
+        m.to_json()
+    }
+}
+
+pub struct RowTestModel {
+    pub rows: Vec<RowTestEntry>
+}
+
+impl ToJson for RowTestModel {
+    fn to_json(&self) -> Json {
+        let mut m: BTreeMap<String, Json> = BTreeMap::new();
+        m.insert("rows".into(), self.rows.to_json());
+        m.to_json()
+    }
+}
+
+pub struct RowTestEntry {
+    pub name: String,
+    pub coolness: i32,
+    pub dopeness: i32,
+}
+
+impl ToJson for RowTestEntry {
+    fn to_json(&self) -> Json {
+        let mut m: BTreeMap<String, Json> = BTreeMap::new();
+        m.insert("name".into(), self.name.to_json());
+        m.insert("coolness".into(), self.coolness.to_json());
+        m.insert("dopeness".into(), self.dopeness.to_json());
+        m.to_json()
+    }
+}

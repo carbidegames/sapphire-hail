@@ -1,9 +1,7 @@
-use std::collections::BTreeMap;
 use clockwork::Modules;
-use clockwork::routes::{self, RouteModel, Routes, UrlParams};
+use clockwork::routes::{self, Routes, UrlParams};
 use clockwork_handlebars::ViewRenderer;
-use webutil::HtmlString;
-use rustc_serialize::json::{Json, ToJson};
+use models::{HelloViewModel, NumberModel, NumberViewModel, RowTestModel, RowTestEntry};
 
 pub fn register(routes: &mut Routes) {
     routes.register("/", index);
@@ -13,31 +11,23 @@ pub fn register(routes: &mut Routes) {
     routes.register("/public/*", routes::file_handler("./public"));
 }
 
-fn index(modules: &Modules, _: UrlParams) -> HtmlString {
+fn index(modules: &Modules, _: UrlParams) -> Vec<u8> {
     let views: &ViewRenderer = modules.get().unwrap();
 
-    views.render("hello", &HelloViewModel {text: "Index".into()})
+    let model = HelloViewModel {text: "Index".into()};
+
+    views.render("hello", &model).into()
 }
 
-fn about(modules: &Modules, _: UrlParams) -> HtmlString {
+fn about(modules: &Modules, _: UrlParams) -> Vec<u8> {
     let views: &ViewRenderer = modules.get().unwrap();
 
-    views.render("hello", &HelloViewModel {text: "About".into()})
+    let model = HelloViewModel {text: "About".into()};
+
+    views.render("hello", &model).into()
 }
 
-struct HelloViewModel {
-    text: String,
-}
-
-impl ToJson for HelloViewModel {
-    fn to_json(&self) -> Json {
-        let mut m: BTreeMap<String, Json> = BTreeMap::new();
-        m.insert("text".into(), self.text.to_json());
-        m.to_json()
-    }
-}
-
-fn number(modules: &Modules, model: NumberModel) -> HtmlString {
+fn number(modules: &Modules, model: NumberModel) -> Vec<u8> {
     let views: &ViewRenderer = modules.get().unwrap();
 
     let view_model = NumberViewModel {
@@ -45,36 +35,10 @@ fn number(modules: &Modules, model: NumberModel) -> HtmlString {
         loneliest: model.num == "1"
     };
 
-    views.render("number", &view_model)
+    views.render("number", &view_model).into()
 }
 
-struct NumberModel {
-    num: String,
-}
-
-impl RouteModel for NumberModel {
-    fn from(url: UrlParams) -> Self {
-        NumberModel {
-            num: url.get("num").unwrap()
-        }
-    }
-}
-
-struct NumberViewModel {
-    num: String,
-    loneliest: bool,
-}
-
-impl ToJson for NumberViewModel {
-    fn to_json(&self) -> Json {
-        let mut m: BTreeMap<String, Json> = BTreeMap::new();
-        m.insert("num".into(), self.num.to_json());
-        m.insert("loneliest".into(), self.loneliest.to_json());
-        m.to_json()
-    }
-}
-
-fn rowtest(modules: &Modules, _: UrlParams) -> HtmlString {
+fn rowtest(modules: &Modules, _: UrlParams) -> Vec<u8> {
     let views: &ViewRenderer = modules.get().unwrap();
 
     let mut rows = Vec::new();
@@ -86,33 +50,5 @@ fn rowtest(modules: &Modules, _: UrlParams) -> HtmlString {
         });
     }
 
-    views.render("rowtest", &RowTestModel {rows: rows})
-}
-
-struct RowTestModel {
-    rows: Vec<RowTestEntry>
-}
-
-impl ToJson for RowTestModel {
-    fn to_json(&self) -> Json {
-        let mut m: BTreeMap<String, Json> = BTreeMap::new();
-        m.insert("rows".into(), self.rows.to_json());
-        m.to_json()
-    }
-}
-
-struct RowTestEntry {
-    name: String,
-    coolness: i32,
-    dopeness: i32,
-}
-
-impl ToJson for RowTestEntry {
-    fn to_json(&self) -> Json {
-        let mut m: BTreeMap<String, Json> = BTreeMap::new();
-        m.insert("name".into(), self.name.to_json());
-        m.insert("coolness".into(), self.coolness.to_json());
-        m.insert("dopeness".into(), self.dopeness.to_json());
-        m.to_json()
-    }
+    views.render("rowtest", &RowTestModel {rows: rows}).into()
 }
