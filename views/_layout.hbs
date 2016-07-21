@@ -4,15 +4,20 @@
          <link rel="stylesheet" type="text/css" href="/public/style/style.css">
     </head>
     <body>
-        <div class="content">
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/about">About</a></li>
-                <li><a href="/number/1">Number #1</a></li>
-                <li><a href="/number/2">Number #2</a></li>
-                <li><a href="/rowtest">Row Test</a></li>
-            </ul>
-            {{{content}}}
+        <div class="container">
+            <nav class="navbar navbar-light bg-faded m-t-1 m-b-1">
+                <a class="navbar-brand" href="/">Sapphire Hail</a>
+                <ul class="nav navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/number/1">Number #1</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/number/2">Number #2</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/rowtest">Row Test</a></li>
+                </ul>
+            </nav>
+            <main>
+                {{{content}}}
+            </main>
         </div>
     </body>
 </html>
