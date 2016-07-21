@@ -1,7 +1,9 @@
+#![feature(custom_derive, plugin)]
+#![plugin(serde_macros)]
+
 extern crate dotenv;
 #[macro_use] extern crate log;
 extern crate log4rs;
-extern crate rustc_serialize;
 extern crate webutil;
 extern crate clockwork;
 extern crate clockwork_handlebars;
