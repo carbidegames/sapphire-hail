@@ -8,8 +8,9 @@ use rustc_serialize::json::{Json, ToJson};
 pub fn register(routes: &mut Routes) {
     routes.register("/", index);
     routes.register("/about", about);
-    routes.register("/number/:num", routes::wrap_model(number));
+    routes.register("/number/:num", routes::model_handler(number));
     routes.register("/rowtest", rowtest);
+    routes.register("/public/*", routes::file_handler("./public"));
 }
 
 fn index(modules: &Modules, _: UrlParams) -> HtmlString {
