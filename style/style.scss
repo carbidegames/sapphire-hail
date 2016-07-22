@@ -1,1 +1,24 @@
-@import "bootstrap";
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+body {
+    @include make-container();
+    @include make-container-max-widths();
+}
+
+.sh-navbar {
+    @extend .navbar, .navbar-light;
+
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+
+    background-color: #f7f7f9;
+
+    ul {
+        @extend .nav, .navbar-nav;
+
+        li {
+            @extend .nav-item;
+            a { @extend .nav-link; }
+        }
+    }
+}
