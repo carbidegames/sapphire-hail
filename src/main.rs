@@ -4,9 +4,10 @@
 extern crate dotenv;
 #[macro_use] extern crate log;
 extern crate log4rs;
-extern crate webutil;
+extern crate webapp;
 extern crate clockwork;
 extern crate clockwork_handlebars;
+extern crate clockwork_server;
 
 mod controllers;
 mod models;
@@ -17,6 +18,7 @@ use std::str::FromStr;
 use clockwork::{Clockwork, Modules};
 use clockwork::routes::Routes;
 use clockwork_handlebars::ViewRenderer;
+use clockwork_server::Server;
 
 fn main() {
     // This allows us to set dev data in .env, while allowing the environment to send us a port
@@ -33,7 +35,8 @@ fn main() {
 
     // Start the server
     let addr = get_addr();
-    let guard = Clockwork::new(modules, routes).http(&addr);
+    let app = Clockwork::new(modules, routes);
+    let guard = Server::new(app).http(&addr);
     info!("Listening on {}", addr);
     guard.join();
 }

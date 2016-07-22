@@ -13,6 +13,7 @@ log = "0.3.6"
 log4rs = {version = "0.4.8", features = ["toml"]}
 serde = "^0.7.0"
 serde_macros = "^0.7.0"
-webutil = {path = "../webutil"}
+webapp = {path = "../webapp"}
 clockwork = {path = "../clockwork"}
 clockwork-handlebars = {path = "../clockwork-handlebars"}
+clockwork-server = {path = "../clockwork-server"}
