@@ -8,7 +8,6 @@ pub fn register(routes: &mut Routes) {
     routes.register("/about", about);
     routes.register("/number/:num", routes::model_handler(number));
     routes.register("/rowtest", rowtest);
-    routes.register("/public/*", routes::file_handler("./public"));
 }
 
 fn index(modules: &Modules, _: UrlParams) -> Vec<u8> {

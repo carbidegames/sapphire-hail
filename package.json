@@ -17,9 +17,9 @@
   },
   "homepage": "https://github.com/carbidegames/sapphire-hail#readme",
   "devDependencies": {
-    "bootstrap": "^4.0.0-alpha.2",
     "gulp": "^3.9.1",
     "gulp-sass": "^2.3.2",
-    "sass-module-importer": "^1.2.1"
+    "sass-module-importer": "^1.2.1",
+    "semancer": "file:../semancer"
   }
 }

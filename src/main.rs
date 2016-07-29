@@ -16,7 +16,7 @@ use std::env;
 use std::net::{SocketAddr, IpAddr};
 use std::str::FromStr;
 use clockwork::{Clockwork, Modules};
-use clockwork::routes::Routes;
+use clockwork::routes::{self, Routes};
 use clockwork_handlebars::ViewRenderer;
 use clockwork_server::Server;
 
@@ -31,6 +31,7 @@ fn main() {
 
     // Load in the controllers
     let mut routes = Routes::new();
+    routes.register("/public/*", routes::file_handler("./public"));
     controllers::register(&mut routes);
 
     // Start the server
