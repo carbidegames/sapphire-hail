@@ -13,7 +13,3 @@ $card-style: (
 
 @import "generic";
 @import "layout";
-
-.card {
-    @include card($card-style);
-}

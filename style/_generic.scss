@@ -1,11 +1,17 @@
 h1 {
     font-size: 2rem;
-    margin-bottom: 0.5rem;
+}
+
+p {
+    line-height: 1.5;
+}
+
+h1, p {
+    margin-bottom: 0.25rem;
 }
 
 table {
     width: 100%;
-    @include card($card-style);
 
     th {
         font-weight: bold;
@@ -17,4 +23,8 @@ table {
 
     // Separate color every row
     tr:nth-child(even) { background-color: $color-background; }
+}
+
+main > article {
+    @include card($card-style);
 }

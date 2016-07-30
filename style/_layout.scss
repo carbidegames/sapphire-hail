@@ -22,3 +22,11 @@ nav {
     ul, li { display: inline-block; }
     li > a:hover { border-bottom: solid 2px $color-text; }
 }
+
+body > footer {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #424959;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}

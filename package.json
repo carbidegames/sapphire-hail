@@ -1,7 +1,7 @@
 {
   "name": "sapphire-hail",
   "version": "0.1.0",
-  "description": "## License Licensed under either of  * Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)  * MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)",
+  "description": "",
   "main": "gulpfile.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,7 +18,9 @@
   "homepage": "https://github.com/carbidegames/sapphire-hail#readme",
   "devDependencies": {
     "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^3.1.0",
     "gulp-sass": "^2.3.2",
+    "gulp-sourcemaps": "^1.6.0",
     "sass-module-importer": "^1.2.1",
     "semancer": "file:../semancer"
   }

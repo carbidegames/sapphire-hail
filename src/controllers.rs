@@ -13,9 +13,7 @@ pub fn register(routes: &mut Routes) {
 fn index(modules: &Modules, _: UrlParams) -> Vec<u8> {
     let views: &ViewRenderer = modules.get().unwrap();
 
-    let model = HelloViewModel {text: "Index".into()};
-
-    views.render("hello", &model).into()
+    views.render("home", &()).into()
 }
 
 fn about(modules: &Modules, _: UrlParams) -> Vec<u8> {
