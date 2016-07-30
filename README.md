@@ -3,8 +3,7 @@
 ## Building
 ```
 npm install
-gulp
-cargo run
+gulp; cargo run
 ```
 
 ## License

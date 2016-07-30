@@ -15,10 +15,12 @@ mod models;
 use std::env;
 use std::net::{SocketAddr, IpAddr};
 use std::str::FromStr;
+use webapp::status::StatusCode;
 use clockwork::{Clockwork, Modules};
 use clockwork::routes::{self, Routes};
 use clockwork_handlebars::ViewRenderer;
 use clockwork_server::Server;
+use models::ErrorModel;
 
 fn main() {
     // This allows us to set dev data in .env, while allowing the environment to send us a port
@@ -36,7 +38,7 @@ fn main() {
 
     // Start the server
     let addr = get_addr();
-    let app = Clockwork::new(modules, routes);
+    let app = Clockwork::new(modules, routes, error);
     let guard = Server::new(app).http(&addr);
     info!("Listening on {}", addr);
     guard.join();
@@ -45,4 +47,10 @@ fn main() {
 fn get_addr() -> SocketAddr {
     let port = u16::from_str(&env::var("PORT").unwrap()).unwrap();
     SocketAddr::new(IpAddr::from_str("0.0.0.0").unwrap(), port)
+}
+
+fn error(modules: &Modules, status: StatusCode) -> Vec<u8> {
+    let views: &ViewRenderer = modules.get().unwrap();
+
+    views.render("_404", &ErrorModel {error: status.to_string()}).into()
 }

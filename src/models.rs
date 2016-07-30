@@ -34,3 +34,8 @@ pub struct RowTestEntry {
     pub coolness: i32,
     pub dopeness: i32,
 }
+
+#[derive(Serialize)]
+pub struct ErrorModel {
+    pub error: String,
+}
