@@ -52,5 +52,5 @@ fn get_addr() -> SocketAddr {
 fn error(modules: &Modules, status: StatusCode) -> Vec<u8> {
     let views: &ViewRenderer = modules.get().unwrap();
 
-    views.render("_404", &ErrorModel {error: status.to_string()}).into()
+    views.render("_error", &ErrorModel {error: status.to_string()}).into()
 }

@@ -1,27 +1,4 @@
-use clockwork::routes::{RouteModel, UrlParams};
-
-#[derive(Serialize)]
-pub struct HelloViewModel {
-    pub text: String,
-}
-
-pub struct NumberModel {
-    pub num: String,
-}
-
-impl RouteModel for NumberModel {
-    fn from(url: UrlParams) -> Self {
-        NumberModel {
-            num: url.get("num").unwrap()
-        }
-    }
-}
-
-#[derive(Serialize)]
-pub struct NumberViewModel {
-    pub num: String,
-    pub loneliest: bool,
-}
+//use clockwork::routes::{RouteModel, UrlParams};
 
 #[derive(Serialize)]
 pub struct RowTestModel {
