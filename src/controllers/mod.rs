@@ -6,8 +6,8 @@ use clockwork_handlebars::ViewRenderer;
 use models::{RowTestModel, RowTestEntry};
 
 pub fn register(routes: &mut Routes) {
-    routes.register("/", index);
-    routes.register("/rowtest", rowtest);
+    routes.get("/", index);
+    routes.get("/rowtest", rowtest);
 
     projects::register(routes);
 }

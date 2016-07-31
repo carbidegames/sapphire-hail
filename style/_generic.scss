@@ -28,3 +28,7 @@ table {
 main > article {
     @include card($card-style);
 }
+
+main > form {
+    @include card($card-style);
+}
