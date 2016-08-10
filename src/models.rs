@@ -16,3 +16,8 @@ pub struct RowTestEntry {
 pub struct ErrorModel {
     pub error: String,
 }
+
+#[derive(Serialize)]
+pub struct NewSubmit {
+    pub title: String,
+}

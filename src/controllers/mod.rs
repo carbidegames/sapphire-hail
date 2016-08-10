@@ -1,7 +1,7 @@
 mod projects;
 
 use clockwork::Modules;
-use clockwork::routes::{Routes, UrlParams};
+use clockwork::routes::{Routes, UriParams, BodyParams};
 use clockwork_handlebars::ViewRenderer;
 use models::{RowTestModel, RowTestEntry};
 
@@ -12,13 +12,13 @@ pub fn register(routes: &mut Routes) {
     projects::register(routes);
 }
 
-fn index(modules: &Modules, _: UrlParams) -> Vec<u8> {
+fn index(modules: &Modules, _: UriParams, _: BodyParams) -> Vec<u8> {
     let views: &ViewRenderer = modules.get().unwrap();
 
     views.render("home", &()).into()
 }
 
-fn rowtest(modules: &Modules, _: UrlParams) -> Vec<u8> {
+fn rowtest(modules: &Modules, _: UriParams, _: BodyParams) -> Vec<u8> {
     let views: &ViewRenderer = modules.get().unwrap();
 
     let mut rows = Vec::new();
